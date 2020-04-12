@@ -19,10 +19,10 @@
             <el-input v-model="form.name" style="width: 370px;" />
           </el-form-item>
           <el-form-item label="商品描述">
-            <el-input v-model="form.describe" style="width: 370px;" />
+            <el-input v-model="form.describe" :rows="3" type="textarea" style="width: 370px;" />
           </el-form-item>
           <el-form-item label="商品规格">
-            <el-input v-model="form.specification" style="width: 370px;" />
+            <el-input v-model="form.specification" :rows="3" type="textarea" style="width: 370px;" />
           </el-form-item>
           <el-form-item label="所属分类" prop="categoryId">
             未设置字典，请手动设置 Select
@@ -42,9 +42,6 @@
           <el-form-item label="状态" prop="enabled">
             <el-radio v-for="item in dict.product_status" :key="item.id" v-model="form.enabled" :label="item.value">{{ item.label }}</el-radio>
           </el-form-item>
-          <el-form-item label="创建日期">
-            <el-input v-model="form.createTime" style="width: 370px;" />
-          </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button type="text" @click="crud.cancelCU">取消</el-button>
@@ -54,6 +51,7 @@
       <!--表格渲染-->
       <el-table ref="table" v-loading="crud.loading" :data="crud.data" size="small" style="width: 100%;" @selection-change="crud.selectionChangeHandler">
         <el-table-column type="selection" width="55" />
+        <el-table-column v-if="columns.visible('id')" prop="id" label="ID" />
         <el-table-column v-if="columns.visible('name')" prop="name" label="商品名称" />
         <el-table-column v-if="columns.visible('describe')" prop="describe" label="商品描述" />
         <el-table-column v-if="columns.visible('specification')" prop="specification" label="商品规格" />
@@ -88,7 +86,7 @@
 </template>
 
 <script>
-import crudProduct from '@/api/product/product'
+import crudProduct from '@/api/product'
 import CRUD, { presenter, header, form, crud } from '@crud/crud'
 import rrOperation from '@crud/RR.operation'
 import crudOperation from '@crud/CRUD.operation'

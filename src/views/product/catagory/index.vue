@@ -27,6 +27,9 @@
           <el-form-item label="创建日期">
             <el-input v-model="form.createTime" style="width: 370px;" />
           </el-form-item>
+          <el-form-item label="所属商家" prop="merchantId">
+            未设置字典，请手动设置 Select
+          </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button type="text" @click="crud.cancelCU">取消</el-button>
@@ -48,6 +51,7 @@
             <span>{{ parseTime(scope.row.createTime) }}</span>
           </template>
         </el-table-column>
+        <el-table-column v-if="columns.visible('merchantId')" prop="merchantId" label="所属商家" />
         <el-table-column v-permission="['admin','productCatagory:edit','productCatagory:del']" label="操作" width="150px" align="center">
           <template slot-scope="scope">
             <udOperation
@@ -64,7 +68,7 @@
 </template>
 
 <script>
-import crudProductCatagory from '@/api/product/productCatagory'
+import crudProductCatagory from '@/api/productCatagory'
 import CRUD, { presenter, header, form, crud } from '@crud/crud'
 import rrOperation from '@crud/RR.operation'
 import crudOperation from '@crud/CRUD.operation'
@@ -73,7 +77,7 @@ import pagination from '@crud/Pagination'
 
 // crud交由presenter持有
 const defaultCrud = CRUD({ title: '商品分类', url: 'api/productCatagory', sort: 'id,desc', crudMethod: { ...crudProductCatagory }})
-const defaultForm = { id: null, name: null, pid: null, enabled: null, createTime: null }
+const defaultForm = { id: null, name: null, pid: null, enabled: null, createTime: null, merchantId: null }
 export default {
   name: 'ProductCatagory',
   components: { pagination, crudOperation, rrOperation, udOperation },
@@ -95,13 +99,17 @@ export default {
         ],
         enabled: [
           { required: true, message: '状态不能为空', trigger: 'blur' }
+        ],
+        merchantId: [
+          { required: true, message: '所属商家不能为空', trigger: 'blur' }
         ]
       },
       queryTypeOptions: [
         { key: 'id', display_name: 'ID' },
         { key: 'name', display_name: '分类名称' },
         { key: 'pid', display_name: '上级分类' },
-        { key: 'enabled', display_name: '状态' }
+        { key: 'enabled', display_name: '状态' },
+        { key: 'merchantId', display_name: '所属商家' }
       ]
     }
   },
