@@ -1,5 +1,13 @@
 import request from '@/utils/request'
 
+export function getCatagorys(params) {
+  return request({
+    url: 'api/productCatagory',
+    method: 'get',
+    params
+  })
+}
+
 export function add(data) {
   return request({
     url: 'api/productCatagory',
@@ -24,4 +32,4 @@ export function edit(data) {
   })
 }
 
-export default { add, edit, del }
+export default { add, edit, del, getCatagorys }
