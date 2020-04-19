@@ -42,8 +42,8 @@
               <el-form-item label="分类名称" prop="name">
                 <el-input v-model="form.name" style="width: 370px;" />
               </el-form-item>
-              <el-form-item v-if="form.pid !== 0" style="margin-bottom: 0;" label="上级分类" prop="pid">
-                <treeselect v-model="form.pid" :options="catagorys" style="width: 178px" placeholder="选择上级类目" />
+              <el-form-item v-if="form.pid !== 0" label="上级分类" prop="pid">
+                <treeselect v-model="form.pid" :options="catagorys" style="width: 370px" placeholder="选择上级类目" />
               </el-form-item>
               <el-form-item label="状态" prop="enabled">
                 <el-radio v-for="item in dict.product_catagory_status" :key="item.id" v-model="form.enabled" :label="item.value">{{ item.label }}</el-radio>
@@ -52,7 +52,7 @@
                 <treeselect
                   v-model="form.dept.id"
                   :options="depts"
-                  style="width: 178px"
+                  style="width: 370px"
                   placeholder="选择所属商家"
                   @select="selectFun"
                 />
@@ -106,7 +106,7 @@ import pagination from '@crud/Pagination'
 import { getDepts } from '@/api/system/dept'
 import Treeselect from '@riophae/vue-treeselect'
 import { getCatagorys } from '@/api/productCatagory'
-
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 // crud交由presenter持有
 const defaultCrud = CRUD({ title: '商品分类', url: 'api/productCatagory', sort: 'id,desc', crudMethod: { ...crudProductCatagory }})
 const defaultForm = { id: null,
@@ -161,6 +161,12 @@ export default {
       // this.crud.toQuery()
       // this.crud.msg.add = '新增成功，默认密码：123456'
     })
+  },
+  mounted: function() {
+    const that = this
+    window.onresize = function temp() {
+      that.height = document.documentElement.clientHeight - 180 + 'px;'
+    }
   },
   methods: {
     // 新增与编辑前做的操作

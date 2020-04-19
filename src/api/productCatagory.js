@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function getCatagorys(params) {
   return request({
-    url: 'api/productCatagory',
+    url: 'api/productCatagory/tree',
     method: 'get',
     params
   })
