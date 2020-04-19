@@ -68,11 +68,10 @@
             </div>
           </el-dialog>
           <!--表格渲染-->
-          <el-table ref="table" v-loading="crud.loading" :data="crud.data" size="small" style="width: 100%;" @selection-change="crud.selectionChangeHandler">
-            <el-table-column type="selection" width="55" />
+          <el-table ref="table" v-loading="crud.loading" :tree-props="{children: 'children', hasChildren: 'hasChildren'}" default-expand-all :data="crud.data" row-key="id" @select="crud.selectChange" @select-all="crud.selectAllChange" @selection-change="crud.selectionChangeHandler">
+            <el-table-column :selectable="checkboxT" type="selection" width="55" />
             <el-table-column v-if="columns.visible('name')" prop="name" label="分类名称" />
-            <el-table-column v-if="columns.visible('pid')" prop="pid" label="上级分类" />
-            <el-table-column v-if="columns.visible('enabled')" prop="enabled" label="状态">
+            <el-table-column v-if="columns.visible('enabled')" prop="enabled" align="center" label="状态">
               <template slot-scope="scope">
                 {{ dict.label.product_catagory_status[scope.row.enabled] }}
               </template>
@@ -92,8 +91,6 @@
               </template>
             </el-table-column>
           </el-table>
-          <!--分页组件-->
-          <pagination />
         </div>
       </el-col>
     </el-row>
@@ -106,13 +103,12 @@ import CRUD, { presenter, header, form, crud } from '@crud/crud'
 import rrOperation from '@crud/RR.operation'
 import crudOperation from '@crud/CRUD.operation'
 import udOperation from '@crud/UD.operation'
-import pagination from '@crud/Pagination'
 import { getDepts } from '@/api/system/dept'
 import Treeselect from '@riophae/vue-treeselect'
 import { getCatagorys } from '@/api/productCatagory'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 // crud交由presenter持有
-const defaultCrud = CRUD({ title: '商品分类', url: 'api/productCatagory', sort: 'id,desc', crudMethod: { ...crudProductCatagory }})
+const defaultCrud = CRUD({ title: '商品分类', url: 'api/productCatagory/tree', sort: 'id,desc', crudMethod: { ...crudProductCatagory }})
 const defaultForm = { id: null,
   name: null,
   pid: null,
@@ -124,7 +120,7 @@ const defaultForm = { id: null,
 }
 export default {
   name: 'ProductCatagory',
-  components: { Treeselect, pagination, crudOperation, rrOperation, udOperation },
+  components: { Treeselect, crudOperation, rrOperation, udOperation },
   mixins: [presenter(defaultCrud), header(), form(defaultForm), crud()],
   dicts: ['product_catagory_status'],
   data() {
@@ -217,6 +213,9 @@ export default {
         this.crud.params[query.type] = query.value
       }
       return true
+    },
+    checkboxT(row, rowIndex) {
+      return row.id !== 1
     }
   }
 }
