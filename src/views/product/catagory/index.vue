@@ -71,17 +71,24 @@
           <el-table ref="table" v-loading="crud.loading" :tree-props="{children: 'children', hasChildren: 'hasChildren'}" default-expand-all :data="crud.data" row-key="id" @select="crud.selectChange" @select-all="crud.selectAllChange" @selection-change="crud.selectionChangeHandler">
             <el-table-column :selectable="checkboxT" type="selection" width="55" />
             <el-table-column v-if="columns.visible('name')" prop="name" label="分类名称" />
-            <el-table-column v-if="columns.visible('enabled')" prop="enabled" align="center" label="状态">
+            <el-table-column v-if="columns.visible('enabled')" label="状态" align="center" prop="enabled">
               <template slot-scope="scope">
-                {{ dict.label.product_catagory_status[scope.row.enabled] }}
+                <el-switch
+                  v-model="scope.row.enabled"
+                  :disabled="scope.row.id === 1"
+                  active-color="#409EFF"
+                  inactive-color="#F56C6C"
+                  @change="changeEnabled(scope.row, scope.row.enabled,)"
+                />
               </template>
             </el-table-column>
+
             <el-table-column v-if="columns.visible('createTime')" prop="createTime" label="创建日期">
               <template slot-scope="scope">
                 <span>{{ parseTime(scope.row.createTime) }}</span>
               </template>
             </el-table-column>
-            <el-table-column v-if="columns.visible('merchantId')" prop="merchantId" label="所属商家" />
+            <el-table-column v-if="columns.visible('dept.name')" prop="dept.name" label="所属商家" />
             <el-table-column v-permission="['admin','productCatagory:edit','productCatagory:del']" label="操作" width="150px" align="center">
               <template slot-scope="scope">
                 <udOperation
@@ -150,8 +157,7 @@ export default {
         { key: 'id', display_name: 'ID' },
         { key: 'name', display_name: '分类名称' },
         { key: 'pid', display_name: '上级分类' },
-        { key: 'enabled', display_name: '状态' },
-        { key: 'merchantId', display_name: '所属商家' }
+        { key: 'enabled', display_name: '状态' }
       ]
     }
   },
