@@ -43,7 +43,12 @@
                 <el-input v-model="form.name" style="width: 370px;" />
               </el-form-item>
               <el-form-item v-if="form.pid !== 0" label="上级分类" prop="pid">
-                <treeselect v-model="form.pid" :options="catagorys" style="width: 370px" placeholder="选择上级类目" />
+                <treeselect
+                  v-model="form.pid"
+                  :options="catagorys"
+                  style="width: 370px"
+                  placeholder="选择上级类目"
+                />
               </el-form-item>
               <el-form-item label="状态" prop="enabled">
                 <el-radio v-for="item in dict.product_catagory_status" :key="item.id" v-model="form.enabled" :label="item.value">{{ item.label }}</el-radio>
@@ -54,7 +59,6 @@
                   :options="depts"
                   style="width: 370px"
                   placeholder="选择所属商家"
-                  @select="selectFun"
                 />
               </el-form-item>
             </el-form>
@@ -112,7 +116,7 @@ const defaultCrud = CRUD({ title: '商品分类', url: 'api/productCatagory', so
 const defaultForm = { id: null,
   name: null,
   pid: null,
-  enabled: null,
+  enabled: 'true',
   createTime: null,
   dept: {
     id: 1
@@ -125,7 +129,7 @@ export default {
   dicts: ['product_catagory_status'],
   data() {
     return {
-      deptName: '', depts: [], deptDatas: [], jobs: [], level: 3, roles: [], catagorys: [],
+      deptName: '', depts: [], deptDatas: [], catagorys: [],
       defaultProps: { children: 'children', label: 'name' },
       permission: {
         add: ['admin', 'productCatagory:add'],
@@ -205,11 +209,6 @@ export default {
         this.query.deptId = data.id
       }
       this.crud.toQuery()
-    },
-    // 点击部门搜索对应的岗位
-    selectFun(node, instanceId) {
-      this.getJobs(node.id)
-      this.form.job.id = null
     },
     // 获取数据前设置好接口地址
     [CRUD.HOOK.beforeRefresh]() {
