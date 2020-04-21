@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-row :gutter="20">
       <!--侧边部门数据-->
-      <el-col :xs="9" :sm="6" :md="4" :lg="4" :xl="4">
+      <el-col v-permission="['admin']" :xs="9" :sm="6" :md="4" :lg="4" :xl="4">
         <div class="head-container">
           <el-input
             v-model="deptName"
@@ -163,9 +163,10 @@ export default {
   },
   created() {
     this.$nextTick(() => {
-      this.getDeptDatas()
-      // this.crud.toQuery()
-      // this.crud.msg.add = '新增成功，默认密码：123456'
+      const roles = store.getters && store.getters.roles
+      if (roles.includes('admin')) {
+        this.getDeptDatas()
+      }
     })
   },
   mounted: function() {

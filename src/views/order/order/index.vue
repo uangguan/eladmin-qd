@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-row :gutter="20">
       <!--侧边部门数据-->
-      <el-col :xs="9" :sm="6" :md="4" :lg="4" :xl="4">
+      <el-col v-permission="['admin']" :xs="9" :sm="6" :md="4" :lg="4" :xl="4">
         <div class="head-container">
           <el-input
             v-model="deptName"
@@ -77,6 +77,7 @@ import crudOperation from '@crud/CRUD.operation'
 import udOperation from '@crud/UD.operation'
 import pagination from '@crud/Pagination'
 import { getDepts } from '@/api/system/dept'
+import store from '@/store'
 
 // crud交由presenter持有
 const defaultCrud = CRUD({ title: '订单管理', url: 'api/orderMain', sort: 'id,desc', crudMethod: { ...crudOrderMain }})
@@ -99,7 +100,10 @@ export default {
   },
   created() {
     this.$nextTick(() => {
-      this.getDeptDatas()
+      const roles = store.getters && store.getters.roles
+      if (roles.includes('admin')) {
+        this.getDeptDatas()
+      }
     })
   },
   methods: {
