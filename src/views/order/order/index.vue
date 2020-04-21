@@ -49,7 +49,7 @@
               <el-table-column v-if="columns.visible('totalAmount')" prop="totalAmount" label="订单总金额" />
               <el-table-column v-if="columns.visible('payType')" prop="payType" label="支付方式" />
               <el-table-column v-if="columns.visible('status')" prop="status" label="订单状态" />
-              <el-table-column v-if="columns.visible('merchantId')" prop="merchantId" label="所属商家" />
+              <el-table-column v-if="columns.visible('dept.name')" prop="dept.name" label="所属商家" />
               <el-table-column v-permission="['admin','orderMain:edit','orderMain:del']" label="操作" width="150px" align="center">
                 <template slot-scope="scope">
                   <udOperation
