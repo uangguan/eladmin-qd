@@ -88,6 +88,8 @@ export default {
   mixins: [presenter(defaultCrud), header(), form(defaultForm), crud()],
   data() {
     return {
+      deptName: '', depts: [], deptDatas: [],
+      defaultProps: { children: 'children', label: 'name' },
       permission: {
         add: ['admin', 'orderMain:add'],
         edit: ['admin', 'orderMain:edit'],
