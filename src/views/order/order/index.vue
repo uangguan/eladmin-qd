@@ -27,15 +27,15 @@
         <div class="app-container">
           <!--工具栏-->
           <div class="head-container">
-            <div v-if="crud.props.searchToggle">
+            <div>
               <!-- 搜索 -->
-              <el-input v-model="query.value" clearable placeholder="输入搜索内容" style="width: 200px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
-              <el-select v-model="query.type" clearable placeholder="类型" class="filter-item" style="width: 130px">
-                <el-option v-for="item in queryTypeOptions" :key="item.key" :label="item.display_name" :value="item.key" />
-              </el-select>
-              <rrOperation :crud="crud" />
+              <el-form :inline="true">
+                <el-form-item label="订单编号">
+                  <el-input v-model="query.orderSn" clearable placeholder="输入订单编号" style="width: 200px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
+                </el-form-item>
+                <rrOperation :crud="crud" />
+              </el-form>
             </div>
-            <crudOperation :permission="permission" />
             <!--表格渲染-->
             <el-table ref="table" v-loading="crud.loading" :data="crud.data" size="small" style="width: 100%;" @selection-change="crud.selectionChangeHandler">
               <el-table-column type="selection" width="55" />
@@ -73,7 +73,6 @@
 import crudOrderMain from '@/api/orderMain'
 import CRUD, { presenter, header, form, crud } from '@crud/crud'
 import rrOperation from '@crud/RR.operation'
-import crudOperation from '@crud/CRUD.operation'
 import udOperation from '@crud/UD.operation'
 import pagination from '@crud/Pagination'
 import { getDepts } from '@/api/system/dept'
@@ -83,20 +82,17 @@ const defaultCrud = CRUD({ title: '订单管理', url: 'api/orderMain', sort: 'i
 const defaultForm = { orderSn: null, createTime: null, memberUsername: null, totalAmount: null, payAmount: null, freightAmount: null, payType: null, status: null, deliveryCompany: null, deliverySn: null, receiverName: null, receiverPhone: null, receiverPostCode: null, receiverProvince: null, receiverCity: null, receiverRegion: null, receiverDetailAddress: null, note: null, confirmStatus: null, deleteStatus: null, paymentTime: null, deliveryTime: null, receiveTime: null, modifyTime: null, merchantId: null, id: null }
 export default {
   name: 'OrderMain',
-  components: { pagination, crudOperation, rrOperation, udOperation },
+  components: { pagination, rrOperation, udOperation },
   mixins: [presenter(defaultCrud), header(), form(defaultForm), crud()],
   data() {
     return {
-      deptName: '', depts: [], deptDatas: [],
+      deptName: '', deptDatas: [],
       defaultProps: { children: 'children', label: 'name' },
       permission: {
         add: ['admin', 'orderMain:add'],
         edit: ['admin', 'orderMain:edit'],
         del: ['admin', 'orderMain:del']
-      },
-      queryTypeOptions: [
-        { key: 'orderSn', display_name: '订单编号' }
-      ]
+      }
     }
   },
   created() {
