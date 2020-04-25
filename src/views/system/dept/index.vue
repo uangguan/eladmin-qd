@@ -4,22 +4,30 @@
     <div class="head-container">
       <div v-if="crud.props.searchToggle">
         <!-- 搜索 -->
-        <el-input v-model="query.name" clearable size="small" placeholder="输入部门名称搜索" style="width: 200px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
-        <el-date-picker
-          v-model="query.createTime"
-          :default-time="['00:00:00','23:59:59']"
-          type="daterange"
-          range-separator=":"
-          size="small"
-          class="date-item"
-          value-format="yyyy-MM-dd HH:mm:ss"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-        />
-        <el-select v-model="query.enabled" clearable size="small" placeholder="状态" class="filter-item" style="width: 90px" @change="crud.toQuery">
-          <el-option v-for="item in enabledTypeOptions" :key="item.key" :label="item.display_name" :value="item.key" />
-        </el-select>
-        <rrOperation :crud="crud" />
+        <el-form :inline="true">
+          <el-form-item label="部门名称">
+            <el-input v-model="query.name" clearable size="small" placeholder="输入部门名称搜索" style="width: 200px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
+          </el-form-item>
+          <el-form-item label="创建日期">
+            <el-date-picker
+              v-model="query.createTime"
+              :default-time="['00:00:00','23:59:59']"
+              type="daterange"
+              range-separator=":"
+              size="small"
+              class="date-item"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+            />
+          </el-form-item>
+          <el-form-item label="部门状态">
+            <el-select v-model="query.enabled" clearable size="small" placeholder="状态" class="filter-item" style="width: 90px" @change="crud.toQuery">
+              <el-option v-for="item in enabledTypeOptions" :key="item.key" :label="item.display_name" :value="item.key" />
+            </el-select>
+          </el-form-item>
+          <rrOperation :crud="crud" />
+        </el-form>
       </div>
       <crudOperation :permission="permission" />
     </div>
