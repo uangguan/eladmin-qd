@@ -77,7 +77,6 @@ import crudOperation from '@crud/CRUD.operation'
 import udOperation from '@crud/UD.operation'
 import pagination from '@crud/Pagination'
 import { getDepts } from '@/api/system/dept'
-import store from '@/store'
 
 // crud交由presenter持有
 const defaultCrud = CRUD({ title: '订单管理', url: 'api/orderMain', sort: 'id,desc', crudMethod: { ...crudOrderMain }})
@@ -102,7 +101,7 @@ export default {
   },
   created() {
     this.$nextTick(() => {
-      const roles = store.getters && store.getters.roles
+      const roles = this.$store.getters.roles
       if (roles.includes('admin')) {
         this.getDeptDatas()
       }
