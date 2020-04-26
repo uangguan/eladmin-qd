@@ -91,7 +91,7 @@
             :data="scope.row"
             :permission="permission"
           />
-        </template> v-if="columns.visible('name')"
+        </template>
       </el-table-column>
     </el-table>
     <!--分页组件-->
