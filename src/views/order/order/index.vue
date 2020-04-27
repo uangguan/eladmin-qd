@@ -39,6 +39,17 @@
             <!--表格渲染-->
             <el-table ref="table" v-loading="crud.loading" :data="crud.data" size="small" style="width: 100%;" @selection-change="crud.selectionChangeHandler">
               <el-table-column type="selection" width="55" />
+              <el-table-column type="expand">
+                <template slot-scope="scope">
+                  <el-table :data="scope.row.orderItems" style="width: 100%">
+                    <el-table-column prop="productId" label="商品id" />
+                    <el-table-column prop="productName" label="商品名称" />
+                    <el-table-column prop="productPrice" label="销售价格" />
+                    <el-table-column prop="productQuantity" label="购买数量" />
+                    <el-table-column prop="productCategoryName" label="商品分类名称" />
+                  </el-table>
+                </template>
+              </el-table-column>
               <el-table-column v-if="columns.visible('orderSn')" prop="orderSn" label="订单编号" />
               <el-table-column v-if="columns.visible('createTime')" prop="createTime" label="提交时间">
                 <template slot-scope="scope">
