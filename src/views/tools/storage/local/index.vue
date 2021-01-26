@@ -5,18 +5,8 @@
       <div v-if="crud.props.searchToggle">
         <!-- 搜索 -->
         <el-input v-model="query.blurry" clearable size="small" placeholder="输入内容模糊搜索" style="width: 200px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
-        <el-date-picker
-          v-model="query.createTime"
-          :default-time="['00:00:00','23:59:59']"
-          type="daterange"
-          range-separator=":"
-          size="small"
-          class="date-item"
-          value-format="yyyy-MM-dd HH:mm:ss"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-        />
-        <rrOperation :crud="crud" />
+        <date-range-picker v-model="query.createTime" class="date-item" />
+        <rrOperation />
       </div>
       <crudOperation :permission="permission">
         <!-- 新增 -->
@@ -64,7 +54,7 @@
     <!--表格渲染-->
     <el-table ref="table" v-loading="crud.loading" :data="crud.data" style="width: 100%;" @selection-change="crud.selectionChangeHandler">
       <el-table-column type="selection" width="55" />
-      <el-table-column v-if="columns.visible('name')" prop="name" label="文件名">
+      <el-table-column prop="name" label="文件名">
         <template slot-scope="scope">
           <el-popover
             :content="'file/' + scope.row.type + '/' + scope.row.realName"
@@ -85,7 +75,7 @@
           </el-popover>
         </template>
       </el-table-column>
-      <el-table-column v-if="columns.visible('path')" prop="path" label="预览图">
+      <el-table-column prop="path" label="预览图">
         <template slot-scope="{row}">
           <el-image
             :src=" baseApi + '/file/' + row.type + '/' + row.realName"
@@ -100,15 +90,11 @@
           </el-image>
         </template>
       </el-table-column>
-      <el-table-column v-if="columns.visible('suffix')" prop="suffix" label="文件类型" />
-      <el-table-column v-if="columns.visible('type')" prop="type" label="类别" />
-      <el-table-column v-if="columns.visible('size')" prop="size" label="大小" />
-      <el-table-column v-if="columns.visible('operate')" prop="operate" label="操作人" />
-      <el-table-column v-if="columns.visible('createTime')" prop="createTime" label="创建日期">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.createTime) }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column prop="suffix" label="文件类型" />
+      <el-table-column prop="type" label="类别" />
+      <el-table-column prop="size" label="大小" />
+      <el-table-column prop="operate" label="操作人" />
+      <el-table-column prop="createTime" label="创建日期" />
     </el-table>
     <!--分页组件-->
     <pagination />
@@ -123,13 +109,15 @@ import CRUD, { presenter, header, form, crud } from '@crud/crud'
 import rrOperation from '@crud/RR.operation'
 import crudOperation from '@crud/CRUD.operation'
 import pagination from '@crud/Pagination'
+import DateRangePicker from '@/components/DateRangePicker'
 
-// crud交由presenter持有
-const defaultCrud = CRUD({ title: '文件', url: 'api/localStorage', crudMethod: { ...crudFile }})
 const defaultForm = { id: null, name: '' }
 export default {
-  components: { pagination, crudOperation, rrOperation },
-  mixins: [presenter(defaultCrud), header(), form(defaultForm), crud()],
+  components: { pagination, crudOperation, rrOperation, DateRangePicker },
+  cruds() {
+    return CRUD({ title: '文件', url: 'api/localStorage', crudMethod: { ...crudFile }})
+  },
+  mixins: [presenter(), header(), form(defaultForm), crud()],
   data() {
     return {
       delAllLoading: false,
@@ -187,10 +175,10 @@ export default {
 </script>
 
 <style scoped>
-  /deep/ .el-image__error, .el-image__placeholder{
+ ::v-deep .el-image__error, .el-image__placeholder{
     background: none;
   }
-  /deep/ .el-image-viewer__wrapper{
+ ::v-deep .el-image-viewer__wrapper{
     top: 55px;
   }
 </style>

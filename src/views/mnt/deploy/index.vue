@@ -5,18 +5,8 @@
       <div v-if="crud.props.searchToggle">
         <!-- 搜索 -->
         <el-input v-model="query.appName" clearable placeholder="输入应用名称查询" style="width: 200px" class="filter-item" @keyup.enter.native="crud.toQuery" />
-        <el-date-picker
-          v-model="query.createTime"
-          :default-time="['00:00:00','23:59:59']"
-          type="daterange"
-          range-separator=":"
-          size="small"
-          class="date-item"
-          value-format="yyyy-MM-dd HH:mm:ss"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-        />
-        <rrOperation :crud="crud" />
+        <date-range-picker v-model="query.createTime" class="date-item" />
+        <rrOperation />
       </div>
       <crudOperation :permission="permission">
         <template slot="right">
@@ -96,16 +86,12 @@
     <fForm ref="sysRestore" :key="times" :app-name="appName" />
     <dForm ref="deploy" />
     <!--表格渲染-->
-    <el-table ref="table" v-loading="crud.loading" :data="crud.data" highlight-current-row stripe style="width: 100%" @selection-change="crud.selectionChangeHandler" @current-change="handleCurrentChange">
+    <el-table ref="table" v-loading="crud.loading" :data="crud.data" highlight-current-row stripe style="width: 100%" @selection-change="handleCurrentChange">
       <el-table-column type="selection" width="55" />
-      <el-table-column v-if="columns.visible('app.name')" prop="app.name" label="应用名称" />
-      <el-table-column v-if="columns.visible('servers')" prop="servers" label="服务器列表" />
-      <el-table-column v-if="columns.visible('createTime')" prop="createTime" label="部署日期">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.createTime) }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column v-permission="['admin','deploy:edit','deploy:del']" label="操作" width="150px" align="center">
+      <el-table-column prop="app.name" label="应用名称" />
+      <el-table-column prop="servers" label="服务器列表" />
+      <el-table-column prop="createTime" label="部署日期" />
+      <el-table-column v-if="checkPer(['admin','deploy:edit','deploy:del'])" label="操作" width="150px" align="center">
         <template slot-scope="scope">
           <udOperation
             :data="scope.row"
@@ -128,12 +114,16 @@ import rrOperation from '@crud/RR.operation'
 import crudOperation from '@crud/CRUD.operation'
 import udOperation from '@crud/UD.operation'
 import pagination from '@crud/Pagination'
-// crud交由presenter持有
-const defaultCrud = CRUD({ title: '部署', url: 'api/deploy', crudMethod: { ...crudDeploy }})
+import DateRangePicker from '@/components/DateRangePicker'
+
 const defaultForm = { id: null, app: { id: null }, deploys: [] }
 export default {
-  components: { dForm, fForm, pagination, crudOperation, rrOperation, udOperation },
-  mixins: [presenter(defaultCrud), header(), form(defaultForm), crud()],
+  name: 'Deploy',
+  components: { dForm, fForm, pagination, crudOperation, rrOperation, udOperation, DateRangePicker },
+  cruds() {
+    return CRUD({ title: '部署', url: 'api/deploy', crudMethod: { ...crudDeploy }})
+  },
+  mixins: [presenter(), header(), form(defaultForm), crud()],
   data() {
     return {
       currentRow: {}, selectIndex: '', appName: '', urlHistory: '',
@@ -184,13 +174,20 @@ export default {
     sysRestore() {
       this.$refs.sysRestore.dialog = true
     },
-    handleCurrentChange(row) {
-      this.currentRow = row
-      this.selectIndex = !row ? null : row.id
-      this.appName = !row ? null : row.app.name
-      this.times = this.times + !row ? 0 : 1
-      this.appId = !row ? null : row.appId
-      this.deployId = !row ? null : row.id
+    handleCurrentChange(selection) {
+      this.crud.selections = selection
+      if (selection.length === 1) {
+        const row = selection[0]
+        this.selectIndex = row.id
+        this.currentRow = row
+        this.appName = row.app.name
+        this.times = this.times + 1
+        this.appId = row.appId
+        this.deployId = row.id
+      } else {
+        this.currentRow = {}
+        this.selectIndex = ''
+      }
     },
     startServer() {
       crudDeploy.startServer(JSON.stringify(this.currentRow))

@@ -8,8 +8,8 @@
       <template v-if="device!=='mobile'">
         <search id="header-search" class="right-menu-item" />
 
-        <el-tooltip content="源码地址" effect="dark" placement="bottom">
-          <Github class="right-menu-item hover-effect" />
+        <el-tooltip content="项目文档" effect="dark" placement="bottom">
+          <Doc class="right-menu-item hover-effect" />
         </el-tooltip>
 
         <el-tooltip content="全屏缩放" effect="dark" placement="bottom">
@@ -24,15 +24,10 @@
 
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="user.avatar ? baseApi + '/avatar/' + user.avatar : Avatar" class="user-avatar">
+          <img :src="user.avatarName ? baseApi + '/avatar/' + user.avatarName : Avatar" class="user-avatar">
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown">
-          <a target="_blank" href="https://docs.auauz.net/">
-            <el-dropdown-item>
-              项目文档
-            </el-dropdown-item>
-          </a>
           <span style="display:block;" @click="show = true">
             <el-dropdown-item>
               布局设置
@@ -58,7 +53,7 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
-import Github from '@/components/Github'
+import Doc from '@/components/Doc'
 import Screenfull from '@/components/Screenfull'
 import SizeSelect from '@/components/SizeSelect'
 import Search from '@/components/HeaderSearch'
@@ -71,7 +66,7 @@ export default {
     Screenfull,
     SizeSelect,
     Search,
-    Github
+    Doc
   },
   data() {
     return {

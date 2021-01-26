@@ -5,34 +5,19 @@
       <div v-if="crud.props.searchToggle">
         <!-- 搜索 -->
         <el-input v-model="query.blurry" clearable placeholder="输入搜索内容" style="width: 200px" class="filter-item" @keyup.enter.native="crud.toQuery" />
-        <el-date-picker
-          v-model="query.deployDate"
-          :default-time="['00:00:00','23:59:59']"
-          type="daterange"
-          range-separator=":"
-          size="small"
-          class="date-item"
-          value-format="yyyy-MM-dd HH:mm:ss"
-          style="width: 240px"
-          start-placeholder="部署开始日期"
-          end-placeholder="部署结束日期"
-        />
-        <rrOperation :crud="crud" />
+        <date-range-picker v-model="query.deployDate" class="date-item" />
+        <rrOperation />
       </div>
       <crudOperation :permission="permission" />
     </div>
     <!--表格渲染-->
     <el-table ref="table" v-loading="crud.loading" :data="crud.data" style="width: 100%" @selection-change="crud.selectionChangeHandler">
       <el-table-column type="selection" width="55" />
-      <el-table-column v-if="columns.visible('appName')" prop="appName" label="应用名称" />
-      <el-table-column v-if="columns.visible('ip')" prop="ip" label="部署IP" />
-      <el-table-column v-if="columns.visible('deployUser')" prop="deployUser" label="部署人员" />
-      <el-table-column v-if="columns.visible('deployDate')" prop="deployDate" label="部署时间">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.deployDate) }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column v-permission="['admin','deployHistory:del']" label="操作" width="100px" align="center">
+      <el-table-column prop="appName" label="应用名称" />
+      <el-table-column prop="ip" label="部署IP" />
+      <el-table-column prop="deployUser" label="部署人员" />
+      <el-table-column prop="deployDate" label="部署时间" />
+      <el-table-column v-if="checkPer(['admin','deployHistory:del'])" label="操作" width="100px" align="center">
         <template slot-scope="scope">
           <el-popover
             :ref="scope.row.id"
@@ -61,12 +46,15 @@ import CRUD, { presenter, header } from '@crud/crud'
 import rrOperation from '@crud/RR.operation'
 import crudOperation from '@crud/CRUD.operation'
 import pagination from '@crud/Pagination'
-// crud交由presenter持有
-const defaultCrud = CRUD({ title: '部署历史', url: 'api/deployHistory', crudMethod: { del }})
+import DateRangePicker from '@/components/DateRangePicker'
+
 export default {
   name: 'DeployHistory',
-  components: { pagination, crudOperation, rrOperation },
-  mixins: [presenter(defaultCrud), header()],
+  components: { pagination, crudOperation, rrOperation, DateRangePicker },
+  cruds() {
+    return CRUD({ title: '部署历史', url: 'api/deployHistory', crudMethod: { del }})
+  },
+  mixins: [presenter(), header()],
   data() {
     return {
       delLoading: false,

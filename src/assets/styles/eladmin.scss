@@ -9,6 +9,16 @@
       line-height: 30.5px;
     }
   }
+  .el-form-item-label {
+    margin: 0 3px 9px 0;
+    display: inline-block;
+    text-align: right;
+    vertical-align: middle;
+    font-size: 14px;
+    color: #606266;
+    line-height: 30.5px;
+    padding: 0 7px 0 7px;
+  }
   .el-button+.el-button {
     margin-left: 0 !important;
   }
@@ -19,8 +29,8 @@
     display: inline-block;
     vertical-align: middle;
     margin-bottom: 10px;
-    height: 30.5px;
-    width: 223px !important;
+    height: 30.5px !important;
+    width: 230px !important;
   }
 }
 .el-avatar {
@@ -100,4 +110,8 @@
   color: #333;
   font-family: Courier New, serif;
   font-size: 12px
+}
+
+.el-tabs{
+  margin-bottom: 25px;
 }

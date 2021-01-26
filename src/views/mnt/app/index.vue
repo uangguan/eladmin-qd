@@ -5,18 +5,8 @@
       <div v-if="crud.props.searchToggle">
         <!-- 搜索 -->
         <el-input v-model="query.name" clearable placeholder="输入名称搜索" style="width: 200px" class="filter-item" @keyup.enter.native="crud.toQuery" />
-        <el-date-picker
-          v-model="query.createTime"
-          :default-time="['00:00:00','23:59:59']"
-          type="daterange"
-          range-separator=":"
-          size="small"
-          class="date-item"
-          value-format="yyyy-MM-dd HH:mm:ss"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-        />
-        <rrOperation :crud="crud" />
+        <date-range-picker v-model="query.createTime" class="date-item" />
+        <rrOperation />
       </div>
       <crudOperation :permission="permission">
         <el-button
@@ -64,17 +54,13 @@
     <!--表格渲染-->
     <el-table ref="table" v-loading="crud.loading" :data="crud.data" highlight-current-row style="width: 100%" @selection-change="crud.selectionChangeHandler" @current-change="handleCurrentChange">
       <el-table-column type="selection" width="55" />
-      <el-table-column v-if="columns.visible('name')" prop="name" label="应用名称" />
-      <el-table-column v-if="columns.visible('port')" prop="port" label="端口号" />
-      <el-table-column v-if="columns.visible('uploadPath')" prop="uploadPath" label="上传目录" />
-      <el-table-column v-if="columns.visible('deployPath')" prop="deployPath" label="部署目录" />
-      <el-table-column v-if="columns.visible('backupPath')" prop="backupPath" label="备份目录" />
-      <el-table-column v-if="columns.visible('createTime')" prop="createTime" label="创建日期">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.createTime) }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column v-permission="['admin','app:edit','app:del']" label="操作" width="150px" align="center">
+      <el-table-column prop="name" label="应用名称" />
+      <el-table-column prop="port" label="端口号" />
+      <el-table-column prop="uploadPath" label="上传目录" />
+      <el-table-column prop="deployPath" label="部署目录" />
+      <el-table-column prop="backupPath" label="备份目录" />
+      <el-table-column prop="createTime" label="创建日期" />
+      <el-table-column v-if="checkPer(['admin','app:edit','app:del'])" label="操作" width="150px" align="center">
         <template slot-scope="scope">
           <udOperation
             :data="scope.row"
@@ -95,13 +81,16 @@ import rrOperation from '@crud/RR.operation'
 import crudOperation from '@crud/CRUD.operation'
 import udOperation from '@crud/UD.operation'
 import pagination from '@crud/Pagination'
-// crud交由presenter持有
-const defaultCrud = CRUD({ title: '应用', url: 'api/app', crudMethod: { ...crudApp }})
+import DateRangePicker from '@/components/DateRangePicker'
+
 const defaultForm = { id: null, name: null, port: 8080, uploadPath: '/opt/upload', deployPath: '/opt/app', backupPath: '/opt/backup', startScript: null, deployScript: null }
 export default {
   name: 'App',
-  components: { pagination, crudOperation, rrOperation, udOperation },
-  mixins: [presenter(defaultCrud), header(), form(defaultForm), crud()],
+  components: { pagination, crudOperation, rrOperation, udOperation, DateRangePicker },
+  cruds() {
+    return CRUD({ title: '应用', url: 'api/app', crudMethod: { ...crudApp }})
+  },
+  mixins: [presenter(), header(), form(defaultForm), crud()],
   data() {
     return {
       currentRow: null,
